@@ -32,10 +32,10 @@ object SparkAwsApp {
 
     //Approach 1: Using DS approach
 
-/*    val inputDf = inputDs.filter(x => !x.matches("[a-zA-Z,\\t]*"))
-      .map(x => x.split("[\t,]").toList)
-      .map(x => if(x.length==2) (x(0).trim.toInt,x(1).trim.toInt) else (x(0).trim.toInt,0))
-      .toDF("Key", "Value")*/
+    /*    val inputDf = inputDs.filter(x => !x.matches("[a-zA-Z,\\t]*"))
+          .map(x => x.split("[\t,]").toList)
+          .map(x => if(x.length==2) (x(0).trim.toInt,x(1).trim.toInt) else (x(0).trim.toInt,0))
+          .toDF("Key", "Value")*/
 
     //Approach 2: Reading DataFrame as csv from DataSet...Both approaches are working
 
@@ -44,11 +44,11 @@ object SparkAwsApp {
       .map(x => x.replaceAll("[\t,]", ","))
 
     //Loading data as DataFrame and replacing null/empty values with 0
-    val inputDf = spark.read.option("inferSchema","true")
+    val inputDf = spark.read.option("inferSchema", "true")
       .csv(processedDs)
       .toDF("Key", "Value")
-      .na.fill(0,Array("Value"))
-      .na.fill("0",Array("Value"))
+      .na.fill(0, Array("Value"))
+      .na.fill("0", Array("Value"))
 
     //filtering keys which are having odd number of values
     val outputDf = inputDf
@@ -59,7 +59,7 @@ object SparkAwsApp {
 
     //Writing output to given location either local or s3
     outputDf.coalesce(1).write
-      .option("header","true").option("delimiter", "\t")
+      .option("header", "true").option("delimiter", "\t")
       .mode("overwrite")
       .csv(outputPath)
 
